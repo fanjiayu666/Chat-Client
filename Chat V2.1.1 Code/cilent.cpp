@@ -10,6 +10,8 @@
 #include <fstream>
 #include <atomic>
 #include <sstream>
+#include <io.h>
+#include <fcntl.h>
 
 #ifdef _MSC_VER
 #pragma comment(lib, "ws2_32.lib")
@@ -40,18 +42,27 @@ std::string to_str(T value) {
 	return os.str();
 }
 
+// --- UTF-8 多字节输入支持 ---
 void setup_console() {
+	// 设置控制台代码页为 UTF-8
+	SetConsoleCP(CP_UTF8);
+	SetConsoleOutputCP(CP_UTF8);
+	
+	// 设置 stdin/stdout 为 UTF-8 模式
+	_setmode(_fileno(stdin), _O_U8TEXT);
+	_setmode(_fileno(stdout), _O_U8TEXT);
+	
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
 	DWORD dwMode = 0;
 	if (hOut != INVALID_HANDLE_VALUE && GetConsoleMode(hOut, &dwMode)) {
-		dwMode |= 0x0004;
+		dwMode |= 0x0004; // ENABLE_VIRTUAL_TERMINAL_PROCESSING
 		SetConsoleMode(hOut, dwMode);
 	}
 	DWORD dwInMode = 0;
 	if (hIn != INVALID_HANDLE_VALUE && GetConsoleMode(hIn, &dwInMode)) {
-		dwInMode |= 0x0080;
-		dwInMode &= ~0x0040;
+		dwInMode |= 0x0080;  // ENABLE_EXTENDED_FLAGS
+		dwInMode &= ~0x0040; // 禁用快速编辑模式
 		SetConsoleMode(hIn, dwInMode);
 	}
 }
@@ -77,12 +88,23 @@ void send_pkt(uint32_t t, const char* d, uint32_t l) {
 	if(l > 0) send(g_sock, d, l, 0);
 }
 
+// --- 安全的多字节字符串读取 ---
+std::string read_utf8_line() {
+	std::wstring wline;
+	if(std::getline(std::wcin, wline)) {
+		// 将 wstring 转换为 UTF-8 string
+		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wline[0], (int)wline.size(), NULL, 0, NULL, NULL);
+		std::string utf8_line(size_needed, 0);
+		WideCharToMultiByte(CP_UTF8, 0, &wline[0], (int)wline.size(), &utf8_line[0], size_needed, NULL, NULL);
+		return utf8_line;
+	}
+	return "";
+}
+
 void upload_file(std::string path) {
 	std::ifstream f(path.c_str(), std::ios::binary|std::ios::ate);
 	if(!f) {
 		std::cout << "\n\033[91m文件不存在！\033[0m\n";
-//		draw_prompt();
-
 		return;
 	}
 	long long sz = f.tellg();
@@ -106,7 +128,6 @@ void upload_file(std::string path) {
 		Sleep(1);
 	}
 	std::cout << "\n发送完成。\n";
-//	draw_prompt();
 }
 
 void recv_thread() {
@@ -164,7 +185,6 @@ void admin_recv_thread() {
 		if(r <= 0) break;
 		buf[r] = 0;
 		std::cout << "\r\033[K" << buf << "";
-//		draw_prompt();
 	}
 }
 
@@ -215,7 +235,7 @@ int main() {
 
 	std::cout << "\033[96m=== CLIENT v2.1.1 ===\033[0m\n";
 	std::cout << "服务器 IP (默认 127.0.0.1): ";
-	std::getline(std::cin, g_srv_ip);
+	g_srv_ip = read_utf8_line();
 	if(g_srv_ip.empty()) g_srv_ip = "127.0.0.1";
 
 	g_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -229,7 +249,7 @@ int main() {
 	}
 
 	std::cout << "输入昵称: ";
-	std::getline(std::cin, g_name);
+	g_name = read_utf8_line();
 	send_pkt(TYPE_LOGIN, g_name.c_str(), (uint32_t)g_name.size());
 
 	// --- 使用新的密钥进行握手验证 ---
@@ -241,8 +261,8 @@ int main() {
 	std::cout << "\n\033[93m指令: /admin <key> | /join <房间> | /sendfile <路径>\033[0m\n";
 	draw_prompt();
 
-	std::string line;
-	while(std::getline(std::cin,line)) {
+	while(true) {
+		std::string line = read_utf8_line();
 		if(line.empty()) {
 			draw_prompt();
 			continue;
