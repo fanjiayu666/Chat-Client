@@ -10,25 +10,25 @@
 #pragma comment(lib, "ws2_32.lib")
 #endif
 
-// --- ·ÅÔÚ main º¯ÊıÖ®Ç° ---
-// --- Çë·ÅÔÚ main º¯ÊıÖ®Ç° ---
+// --- è°ƒç”¨ main å‡½æ•°ä¹‹å‰ ---
+// --- åˆå§‹åŒ– main å‡½æ•°ä¹‹å‰ ---
 void setup_console() {
-    // 1. »ñÈ¡¿ØÖÆÌ¨¾ä±ú
+    // 1. è·å–æ§åˆ¶å°å¥æŸ„
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
     
-    // 2. ÆôÓÃÑÕÉ«Ö§³Ö (Windows 10+)
+    // 2. å¯ç”¨å½©è‰²æ”¯æŒ (Windows 10+)
     DWORD dwMode = 0;
     if (hOut != INVALID_HANDLE_VALUE && GetConsoleMode(hOut, &dwMode)) {
         dwMode |= 0x0004; // ENABLE_VIRTUAL_TERMINAL_PROCESSING
         SetConsoleMode(hOut, dwMode);
     }
 
-    // 3. ĞŞ¸´ÊäÈëÄ£Ê½ (·ÀÖ¹Ñ¡ÖĞÎÄ×Öºó³ÌĞòÔİÍ£)
+    // 3. ä¿®æ”¹è¾“å…¥æ¨¡å¼ (é˜²æ­¢é€‰ä¸­æ–‡å­—ä¼šæš‚åœ)
     DWORD dwInMode = 0;
     if (hIn != INVALID_HANDLE_VALUE && GetConsoleMode(hIn, &dwInMode)) {
         dwInMode |= 0x0080; // ENABLE_EXTENDED_FLAGS
-        dwInMode &= ~0x0040; // ½ûÓÃ¿ìËÙ±à¼­Ä£Ê½(¿ÉÑ¡£¬·ÀÖ¹Êó±êµãÒ»ÏÂ¾ÍÔİÍ£)
+        dwInMode &= ~0x0040; // æ¸…é™¤å¿«é€Ÿç¼–è¾‘æ¨¡å¼(ç¦é€‰æ–‡æœ¬ä¼šæš‚åœç¨‹åºä¸€åˆ»é’Ÿåœé¡¿)
         SetConsoleMode(hIn, dwInMode);
     }
 }
@@ -51,23 +51,23 @@ int main() {
     addr.sin_addr.s_addr = inet_addr(ip.c_str());
 
     if (connect(s, (sockaddr*)&addr, sizeof(addr)) != 0) {
-        std::cout << "\033[91mÁ¬½ÓÊ§°Ü¡£ÇëÈ·ÈÏ·şÎñÆ÷ÒÑÆô¶¯ÇÒ¶Ë¿Ú 7891 ¿ª·Å¡£\033[0m\n";
+        std::cout << "\033[91mè¿æ¥å¤±è´¥ï¼è¯·ç¡®ä¿æœåŠ¡å™¨å·²å¯åŠ¨å¹¶ç›‘å¬ç«¯å£ 7891 æ­£å¸¸ã€‚\033[0m\n";
         return 1;
     }
 
     std::atomic<bool> run(true);
-    // ½ÓÊÕÏß³Ì
+    // æ¥æ”¶çº¿ç¨‹
     std::thread([&]() {
         char buf[4096];
         while (run) {
             int r = recv(s, buf, sizeof(buf) - 1, 0);
             if (r <= 0) break;
             buf[r] = 0;
-            // Çå³ıµ±Ç°ĞĞ²¢Êä³ö½ÓÊÕµ½µÄÄÚÈİ
+            // æ¶ˆæ¯åœ¨å‰é¢æ˜¾ç¤ºï¼Œåé¢æœ‰ç”¨æˆ·è¾“å…¥æç¤ºç¬¦
             std::cout << "\r" << buf << std::flush;
         }
         run = false;
-        std::cout << "\n[ÏµÍ³] Á¬½Ó¶Ï¿ª¡£\n";
+        std::cout << "\n[ç³»ç»Ÿ] è¿æ¥å·²æ–­å¼€ï¼\n";
         exit(0);
     }).detach();
 
@@ -76,11 +76,10 @@ int main() {
         if (line == "exit") break;
         line += "\n";
         send(s, line.c_str(), (int)line.size(), 0);
-        Sleep(10); // ·ÀÖ¹Êä³ö»ìÂÒ
+        Sleep(10); // é˜²æ­¢æ¶ˆæ¯å †ç§¯
     }
 
     closesocket(s);
     WSACleanup();
     return 0;
 }
-

@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 #include <set>
-#include <deque> // ĞÂÔö£ºÓÃÓÚ»¬¶¯´°¿Ú¼ÇÂ¼Ê±¼ä´Á
+#include <deque> // ç”¨å¾ªç¯é˜Ÿåˆ—æ¥ç¼“å­˜åœ¨ç¼“å†²åŒºä¸­è®°å½•æ—¶é—´æˆ³
 #include <string>
 #include <sstream>
 #include <thread>
@@ -18,7 +18,7 @@
 #pragma comment(lib, "ws2_32.lib")
 #endif
 
-// --- Ğ­Òé¶¨Òå ---
+// --- åè®®å®šä¹‰ ---
 enum PacketType { 
     TYPE_LOGIN=1, TYPE_TEXT=2, TYPE_FILE_HEADER=3, TYPE_FILE_CHUNK=4, 
     TYPE_SYSTEM=5, TYPE_CHECK_L=10086 
@@ -28,23 +28,23 @@ enum PacketType {
 struct PacketHeader { uint32_t length; uint32_t type; };
 #pragma pack(pop)
 
-// --- ÅäÖÃ²ÎÊı ---
+// --- å¯†é’¥é…ç½® ---
 const std::string SERVER_VERSION = "DBD311EBDE5B214A54EFEB28DB774E3E9B665FF0D5EB61F3AEA5BC4E44B5264B2FBA3CFD49320402784A094248DCAD46C770966A841E0418FB4124AF9ED25A4E";
 std::string ADMIN_KEY; 
 
-// ·ÀË¢ÆÁ²ÎÊı
-const int LIMIT_MSG_1S = 5;    // 1Ãë×î¶à5Ìõ
-const int LIMIT_MSG_10S = 20;  // 10Ãë×î¶à20Ìõ
-const int LIMIT_FILE_10S = 3;  // 10Ãë×î¶à5¸öÎÄ¼şÇëÇó
-const int MAX_KICKS_PER_MIN = 5; // 1·ÖÖÓÄÚ±»Ìß5´ÎÔò·âIP
+// é™æµå‚æ•°
+const int LIMIT_MSG_1S = 5;    // 1ç§’å†…æœ€å¤š5æ¡
+const int LIMIT_MSG_10S = 20;  // 10ç§’å†…æœ€å¤š20æ¡
+const int LIMIT_FILE_10S = 3;  // 10ç§’å†…æœ€å¤š5ä¸ªæ–‡ä»¶ä¼ è¾“
+const int MAX_KICKS_PER_MIN = 5; // 1åˆ†é’Ÿå†…åŒIPæœ€å¤š5æ¬¡è¿è§„
 
-// --- ½á¹¹Ìå ---
+// --- ç»“æ„ä½“ ---
 struct ClientContext {
     SOCKET sock;
     std::string name, ip, room;
     bool checked;
     
-    // Ë¢ÆÁ¼ì²â¶ÓÁĞ
+    // é™æµå‚æ•°ç»“æ„
     std::deque<time_t> msg_times;
     std::deque<time_t> file_times;
 
@@ -60,16 +60,16 @@ struct AdminContext {
     AdminContext(SOCKET s, std::string i) : sock(s), ip(i) {}
 };
 
-// --- È«¾Ö±äÁ¿ ---
+// --- å…¨å±€å˜é‡ ---
 std::mutex g_mutex;
 std::map<SOCKET, ClientContext> clients;
 std::map<SOCKET, AdminContext> admins;
 SOCKET g_console_sock = INVALID_SOCKET;
 std::set<std::string> banned_ips;
 std::set<std::string> pending_bans;
-std::map<std::string, std::deque<time_t>> ip_violation_records; // IPÎ¥¹æ¼ÇÂ¼
+std::map<std::string, std::deque<time_t>> ip_violation_records; // IPè¿è§„è®°å½•
 
-// --- ¹¤¾ßº¯Êı ---
+// --- å·¥å…·å‡½æ•° ---
 template <typename T>
 std::string to_str(T value) {
     std::ostringstream os; os << value; return os.str();
@@ -90,20 +90,20 @@ void setup_console() {
 
 void print_banner() {
     std::cout << "\033[96m"
-        << "¨X¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨[\n"
-        << "¨U       CHAT SERVER v2.1.1 (AntiSpam)    ¨U\n"
-        << "¨U      [8080:Chat] [9001:Admin]          ¨U\n"
-        << "¨^¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨a\033[0m" << std::endl;
+        << "â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”“\n"
+        << "â”ƒ       CHAT SERVER v2.1.1 (AntiSpam)    â”ƒ\n"
+        << "â”ƒ      [8080:Chat] [9001:Admin]          â”ƒ\n"
+        << "â”—â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”›\033[0m" << std::endl;
 }
 
 void server_log(const std::string& tag, const std::string& msg) {
     time_t now = time(0); char dt[64];
     strftime(dt, sizeof(dt), "%H:%M:%S", localtime(&now));
     std::string color = "\033[97m"; 
-    if(tag == "[ÏµÍ³]") color = "\033[94m";
-    if(tag == "[¹ÜÀí]") color = "\033[95m";
-    if(tag == "[ÉêÇë]") color = "\033[93m";
-    if(tag == "[°²È«]") color = "\033[91m"; // Red
+    if(tag == "[ç³»ç»Ÿ]") color = "\033[94m";
+    if(tag == "[ç™»å½•]") color = "\033[95m";
+    if(tag == "[æ“ä½œ]") color = "\033[93m";
+    if(tag == "[å®‰å…¨]") color = "\033[91m"; // Red
     
     std::string out = color + "[" + dt + "] " + tag + " " + msg + "\033[0m";
     std::cout << out << std::endl;
@@ -118,7 +118,7 @@ void rotate_admin_key() {
     char tmp[16];
     sprintf(tmp, "%d", rand() % 900000 + 100000);
     ADMIN_KEY = tmp;
-    std::string msg = "[ÏµÍ³] Admin Key Refreshed: " + ADMIN_KEY;
+    std::string msg = "[ç³»ç»Ÿ] Admin Key Refreshed: " + ADMIN_KEY;
     std::cout << "\033[93m" << msg << "\033[0m" << std::endl;
     if(g_console_sock != INVALID_SOCKET) {
         std::string cmsg = "\r\033[93m" + msg + "\033[0m\nConsole > ";
@@ -155,8 +155,8 @@ void cleanup_socket(SOCKET s, int port) {
         std::string r = clients[s].room;
         clients.erase(s);
         lk.unlock();
-        broadcast_room(r, TYPE_SYSTEM, n + " Àë¿ªÁË·¿¼ä¡£");
-        server_log("[ÍË³ö]", n);
+        broadcast_room(r, TYPE_SYSTEM, n + " ç¦»å¼€äº†æˆ¿é—´ã€‚");
+        server_log("[ç¦»çº¿]", n);
     } 
     else if (port == 9001 && admins.count(s)) {
         admins.erase(s);
@@ -165,7 +165,7 @@ void cleanup_socket(SOCKET s, int port) {
     else if (port == 7891 && s == g_console_sock) {
         g_console_sock = INVALID_SOCKET;
         lk.unlock();
-        std::cout << "[ÏµÍ³] ×Ü¿ØÌ¨¶Ï¿ªÁ¬½Ó" << std::endl;
+        std::cout << "[ç³»ç»Ÿ] æ§åˆ¶å°æ–­å¼€è¿æ¥" << std::endl;
     }
     else lk.unlock();
     
@@ -182,13 +182,13 @@ void perform_kick_ip(std::string ip) {
         }
     }
     for(size_t i=0; i<to_kick.size(); ++i) {
-        send_packet_str(to_kick[i], TYPE_SYSTEM, "ÄãµÄIPÒÑ±»·â½û¡£");
+        send_packet_str(to_kick[i], TYPE_SYSTEM, "è¯¥IPå·²è¢«å°ç¦ã€‚");
         Sleep(50);
         cleanup_socket(to_kick[i], 8080);
     }
 }
 
-// --- ×Ô¶¯·â½ûÂß¼­ ---
+// --- è‡ªåŠ¨ç¦ç”¨é€»è¾‘ ---
 void register_ip_violation(std::string ip) {
     std::lock_guard<std::mutex> lk(g_mutex);
     
@@ -196,51 +196,51 @@ void register_ip_violation(std::string ip) {
     std::deque<time_t>& records = ip_violation_records[ip];
     records.push_back(now);
 
-    // ÇåÀí³¬¹ı60ÃëµÄ¼ÇÂ¼
+    // æ¸…é™¤60ç§’å‰çš„è®°å½•
     while(!records.empty() && records.front() < now - 60) {
         records.pop_front();
     }
 
-    // ´¥·¢×Ô¶¯·â½û
+    // æ£€æŸ¥æ˜¯å¦è‡ªåŠ¨ç¦ç”¨
     if(records.size() >= MAX_KICKS_PER_MIN) {
         banned_ips.insert(ip);
         
-        // ¼ÇÂ¼ÈÕÖ¾
-        std::string log_msg = "IP " + ip + " Æµ·±Î¥¹æ (" + to_str(records.size()) + "´Î/·Ö), ×Ô¶¯·â½ûÉúĞ§¡£";
-        // ÒòÎªÎÒÃÇÔÚ mutex ÄÚ²¿£¬²»ÄÜµ÷ÓÃ´ø lock µÄ server_log£¬Ö»ÄÜ´òÓ¡
-        std::cout << "\033[91m[°²È«] " << log_msg << "\033[0m" << std::endl;
+        // è®°å½•æ—¥å¿—
+        std::string log_msg = "IP " + ip + " é¢‘ç¹è¿è§„ (" + to_str(records.size()) + "æ¬¡/åˆ†), è‡ªåŠ¨æ·»åŠ åˆ°é»‘åå•";
+        // å› ä¸ºæˆ‘ä»¬åœ¨ mutex å†…éƒ¨æ‰€ä»¥ä¸èƒ½å†å» lock å’Œ server_logï¼Œåªèƒ½ç›´æ¥æ‰“å°
+        std::cout << "\033[91m[å®‰å…¨] " << log_msg << "\033[0m" << std::endl;
         if(g_console_sock != INVALID_SOCKET) {
-            std::string cmsg = "\r\033[91m[°²È«] " + log_msg + "\033[0m\nConsole > ";
+            std::string cmsg = "\r\033[91m[å®‰å…¨] " + log_msg + "\033[0m\nConsole > ";
             send(g_console_sock, cmsg.c_str(), (int)cmsg.size(), 0);
         }
 
-        // ½âËøºóÖ´ĞĞÌßÈË£¬·ÀÖ¹ËÀËø
-        // µ«ÕâÀïÎÒÃÇÒÑ¾­ÔÚlockÀïÁË£¬ËùÒÔ²»ÄÜµ÷ÓÃ perform_kick_ip (ËüÒ²Ëø)
-        // ÎÒÃÇÖ±½ÓÊÕ¼¯ÒªÌßµÄsocket£¬ÔÚÑ­»·½áÊøºóÊÖ¶¯²Ù×÷
+        // æˆ‘ä»¬å·²ç»åœ¨æ‰§è¡Œæ­¤æ“ä½œäº†ï¼Œä¸¥ç¦å†è¯•
+        // å¦‚æœæˆ‘ä»¬å·²ç»æ˜¯åœ¨ lock å†…éƒ¨æ‰€ä»¥ä¸èƒ½å†å» perform_kick_ip (ä¹Ÿæ˜¯ä¸å¯¹)
+        // æ‰€ä»¥ç›´æ¥ç”¨éœ€è¦çš„ socket åšä¸ªå¾ªç¯å¤„ç†æˆ–æ‰‹åŠ¨åˆ é™¤
         std::vector<SOCKET> to_kick;
         for(auto it = clients.begin(); it != clients.end(); ++it) {
             if(it->second.ip == ip) to_kick.push_back(it->first);
         }
         
-        // ÁÙÊ±ÊÍ·ÅËøÈ¥ÌßÈË? ²»£¬ÎÒÃÇ¿ÉÒÔÖ±½ÓÔÚÕâÀï°Ñsocket¹Ø±Õ±ê¼Ç·¢³öÈ¥£¬
-        // µ«ÎªÁË°²È«Æğ¼û£¬ÎÒÃÇÑ¡ÔñÔÚÍâ²¿´¦Àí¡£»òÕßÕâÀïÖ±½Ó·¢ËÍ°ü²¢ÇåÀí¡£
-        // Îª¼ò»¯Âß¼­£¬ÎÒÃÇÔÚÕâÀïÖ±½Ó´¦Àí£¨ËäÈ»³ÖÓĞËø²»Ì«ºÃ£¬µ«²Ù×÷ºÜ¿ì£©
-        // *ĞŞÕı*£ºperform_kick_ip »áÖØĞÂ»ñÈ¡Ëø£¬µ¼ÖÂËÀËø¡£±ØĞë±ÜÃâµ÷ÓÃËü¡£
+        // ä¸´æ—¶è§£é”ç„¶åå»æ‰§è¡Œ? ä½†è¿™æ ·åˆä¸å®‰å…¨å‘€
+        // å› ä¸ºè¿™æ—¶å€™å®‰å…¨ä»£ç å·²ç»æ‰§è¡Œæ‰€ä»¥æˆ‘ä»¬å¯ä»¥ç›´æ¥å…³é—­è¿™äº› socket å—?ä¸å¯èƒ½å¦‚æ­¤ç®€å•
+        // ä¸ºäº†å®‰å…¨è€ƒé‡æˆ‘ä»¬ç›´æ¥å¤„ç†ä»¥åŠç„¶åç»§ç»­é”å¤ªå¤æ‚ï¼ˆå¯èƒ½ä¼šæ­»é”ï¼‰
+        // *æ¨è*ï¼šperform_kick_ip æ–¹æ³•ä¸‹ä¼šé‡æ–°è·å–æ–°çš„ mutex å¹¶å¤„ç†æ‰€æœ‰çš„æ“ä½œ
         
-        // ÓÉÓÚÒÑ¾­ÔÚËøÄÚ£¬ÎÒÃÇ²»ÄÜÖ±½Óµ÷ÓÃ cleanup_socket (ËüÒ²»á»ñÈ¡Ëø)¡£
-        // ÕâÖÖÇé¿öÏÂ£¬ÎÒÃÇÖ»°Ñ IP ¼ÓºÚÃûµ¥¡£
-        // Î¥¹æµÄÄÇ¸öÁ¬½Ó»áÔÚ check_spam ·µ»Ø false ºó±» client_thread Ìßµô¡£
-        // ÆäËûÍ¬IPÁ¬½Ó»áÔÚÏÂ´Î·¢ÏûÏ¢Ê±±»¼ì²âµ½ ban¡£
-        // »òÕß£¬ÎÒÃÇ¿ÉÒÔÆô¶¯Ò»¸öÏß³ÌÈ¥ÌßÆäËûÈË¡£
+        // ä¸è¿‡æˆ‘ä»¬å·²ç»é”äº†ï¼Œæ‰€ä»¥æˆ‘ä»¬ä¸èƒ½ç›´æ¥å» cleanup_socket (ä¹Ÿæ˜¯ä¸å¯¹çš„)
+        // æ¢ä¸ªæ–¹å¼ï¼Œæˆ‘ä»¬åªå¯¹ IP åšæ ‡è®°ä½†ä¸ç«‹å³
+        // è¿è§„ç‚¹æ•°æ˜¯åœ¨ç‹¬ç«‹çš„ check_spam å‡½æ•°è¿”å› false å¯¼è‡´ client_thread åœæ­¢
+        // æ‰€ä»¥åŒIPæ–°è¿æ¥é‡æ–°å°è¯•æ¶ˆæ¯æ—¶ä¼šæ£€æµ‹åˆ° ban äº†
+        // æ‰€ä»¥ï¼Œæˆ‘ä»¬å¯ä»¥åå°ä¸€ä¸ªçº¿ç¨‹å»åšæ“ä½œäº†ã€‚
         std::thread([ip](){ 
-            Sleep(100); // µÈ´ıµ±Ç°ËøÊÍ·Å
+            Sleep(100); // ç­‰å¾…å‰é¢æ“ä½œå®Œæˆ
             perform_kick_ip(ip); 
         }).detach();
     }
 }
 
-// --- Ë¢ÆÁ¼ì²âºËĞÄËã·¨ ---
-// ·µ»Ø false ±íÊ¾Ë¢ÆÁ£¬ĞèÒªÌß³ö
+// --- é™æµæ£€æµ‹ç®—æ³• ---
+// è¿”å› false è¡¨ç¤ºè§¦å‘é™æµ
 bool check_spam(SOCKET s, bool is_file) {
     std::lock_guard<std::mutex> lk(g_mutex);
     if(clients.find(s) == clients.end()) return true;
@@ -249,10 +249,10 @@ bool check_spam(SOCKET s, bool is_file) {
     time_t now = time(0);
     std::deque<time_t>& q = is_file ? ctx.file_times : ctx.msg_times;
 
-    // Ìí¼Óµ±Ç°Ê±¼ä
+    // æ·»åŠ åˆ°å½“å‰æ—¶é—´
     q.push_back(now);
 
-    // ÇåÀí³¬¹ı10ÃëÇ°µÄ¼ÇÂ¼
+    // æ¸…é™¤è¶…è¿‡10ç§’å‰çš„è®°å½•
     while(!q.empty() && q.front() < now - 10) {
         q.pop_front();
     }
@@ -260,14 +260,14 @@ bool check_spam(SOCKET s, bool is_file) {
     bool spam = false;
     
     if(is_file) {
-        // ÎÄ¼ş¼ì²â: 10ÃëÄÚ³¬¹ıÏŞÖÆ
+        // æ–‡ä»¶é™æµ: 10ç§’å†…ä¸è¶…è¿‡3ä¸ª
         if(q.size() > LIMIT_FILE_10S) spam = true;
     } else {
-        // ÏûÏ¢¼ì²â
-        // 1. ¼ì²é10Ãë×ÜÁ¿
+        // æ¶ˆæ¯é™æµ
+        // 1. æ£€æŸ¥10ç§’é™åˆ¶
         if(q.size() > LIMIT_MSG_10S) spam = true;
         
-        // 2. ¼ì²é1ÃëË²¼äÁ¿ (µ¹Ğò±éÀú×î½üµÄ)
+        // 2. æ£€æŸ¥1ç§’å†…æ¶ˆæ¯æ•° (æœ€å¤šè¿ç»­ä¸¤ä¸ª)
         int count_1s = 0;
         for(auto it = q.rbegin(); it != q.rend(); ++it) {
             if(*it >= now - 1) count_1s++;
@@ -277,14 +277,14 @@ bool check_spam(SOCKET s, bool is_file) {
     }
 
     if(spam) {
-        return false; // ÅĞ¶¨Ë¢ÆÁ
+        return false; // åˆ¤æ–­è§¦å‘
     }
-    return true; // Õı³£
+    return true; // åˆæ³•
 }
 
-// --- ×Ü¿ØÌ¨Âß¼­ ---
+// --- æ§åˆ¶å°é€»è¾‘ ---
 void console_thread(SOCKET s) {
-    std::string welcome = "\033[96m¨X¨T¨T¨T¨T ROOT CONSOLE ¨T¨T¨T¨T¨[\n¨U Ö¸Áî: agree, kick,   ¨U\n¨U       ban, list      ¨U\n¨^¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨a\033[0m\nConsole > ";
+    std::string welcome = "\033[96mâ”â”â”â”â”â”â” ROOT CONSOLE â”â”â”â”â”â”â”“\nâ”ƒ æŒ‡ä»¤: agree, kick,   â”ƒ\nâ”ƒ       ban, list      â”ƒ\nâ”—â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”›\033[0m\nConsole > ";
     send(s, welcome.c_str(), (int)welcome.size(), 0);
     
     char buf[1024];
@@ -312,17 +312,17 @@ void console_thread(SOCKET s) {
             }
             if(found) {
                 perform_kick_ip(ip);
-                resp = "\033[92m[³É¹¦] IP [" + ip + "] ÒÑ·â½û²¢Ìß³öÓÃ»§¡£\033[0m";
-                server_log("[ÉóÅú]", "×Ü¿ØÌ¨Í¨¹ı·â½û: " + ip);
+                resp = "\033[92m[æˆåŠŸ] IP [" + ip + "] å·²æ·»åŠ åˆ°é»‘åå•å¹¶è¸¢å‡ºç”¨æˆ·ï¼\033[0m";
+                server_log("[æ“ä½œ]", "æ§åˆ¶å°é€šè¿‡æ ¸å‡†: " + ip);
             } else {
-                resp = "\033[91m[´íÎó] Î´ÕÒµ½¸Ã IP µÄÉêÇë¼ÇÂ¼¡£\033[0m";
+                resp = "\033[91m[å¤±è´¥] æœªæ‰¾åˆ°å¾…æ ¸å‡† IP çš„æ“ä½œè®°å½•ï¼\033[0m";
             }
         }
         else if(cmd.find("ban ") == 0) {
             std::string ip = cmd.substr(4);
             { std::lock_guard<std::mutex> lk(g_mutex); banned_ips.insert(ip); }
             perform_kick_ip(ip);
-            resp = "\033[92m[Ç¿ÖÆ] IP [" + ip + "] ÒÑ·â½û¡£\033[0m";
+            resp = "\033[92m[å¼ºåˆ¶] IP [" + ip + "] å·²è¢«å°ç¦\033[0m";
         }
         else if(cmd.find("kick ") == 0) {
             std::string target = cmd.substr(5);
@@ -334,36 +334,36 @@ void console_thread(SOCKET s) {
                 }
             } 
             if(ts != INVALID_SOCKET) {
-                send_packet_str(ts, TYPE_SYSTEM, "ÄãÒÑ±»×Ü¿ØÌ¨Ìß³ö¡£");
+                send_packet_str(ts, TYPE_SYSTEM, "æ‚¨å·²è¢«æ§åˆ¶å°è¸¢å‡ºï¼");
                 std::thread([ts](){ Sleep(50); cleanup_socket(ts, 8080); }).detach();
-                resp = "\033[92m[³É¹¦] ÒÑÌß³ö: " + target + "\033[0m";
+                resp = "\033[92m[æˆåŠŸ] å·²è¸¢å‡º: " + target + "\033[0m";
             } else {
-                resp = "\033[91m[´íÎó] ÕÒ²»µ½ÓÃ»§¡£\033[0m";
+                resp = "\033[91m[å¤±è´¥] æœªæ‰¾åˆ°ç”¨æˆ·ï¼\033[0m";
             }
         }
         else if(cmd == "list") {
             std::lock_guard<std::mutex> lk(g_mutex);
-            resp = "\n\033[93m=== ÔÚÏßÁĞ±í ===\033[0m\n";
+            resp = "\n\033[93m=== åœ¨çº¿ç”¨æˆ· ===\033[0m\n";
             for(auto it = clients.begin(); it != clients.end(); ++it) {
                 resp += " [" + it->second.room + "] " + it->second.name + " (" + it->second.ip + ")\n";
             }
-            resp += "\n\033[93m=== ´ıÉóÅú Ban ===\033[0m\n";
-            if(pending_bans.empty()) resp += " (ÎŞ)\n";
+            resp += "\n\033[93m=== å¾…å®¡æŸ¥Ban ===\033[0m\n";
+            if(pending_bans.empty()) resp += " (æ— )\n";
             for(auto s : pending_bans) resp += " - " + s + "\n";
             
-            resp += "\n\033[91m=== ×Ô¶¯·â½ûÍ³¼Æ ===\033[0m\n";
+            resp += "\n\033[91m=== è‡ªåŠ¨è¿è§„ç»Ÿè®¡ ===\033[0m\n";
             for(auto& kv : ip_violation_records) {
                 if(!kv.second.empty()) 
-                    resp += " IP: " + kv.first + " (×î½üÎ¥¹æ: " + to_str(kv.second.size()) + "´Î)\n";
+                    resp += " IP: " + kv.first + " (æ€»è¿è§„: " + to_str(kv.second.size()) + "æ¬¡)\n";
             }
         }
         else if(cmd.find("unban ") == 0) {
             std::string ip = cmd.substr(6);
             { std::lock_guard<std::mutex> lk(g_mutex); banned_ips.erase(ip); ip_violation_records.erase(ip); }
-            resp = "IP ÒÑ´ÓºÚÃûµ¥ÒÆ³ı¡£";
+            resp = "IP å·²ä»é»‘åå•ç§»é™¤";
         }
         else {
-            resp = "Î´ÖªÖ¸Áî¡£¿ÉÓÃ: list, kick, ban, unban, agree";
+            resp = "æœªçŸ¥çš„å‘½ä»¤: list, kick, ban, unban, agree";
         }
 
         resp += "\nConsole > ";
@@ -372,7 +372,7 @@ void console_thread(SOCKET s) {
     cleanup_socket(s, 7891);
 }
 
-// --- ¹ÜÀíÔ±Ïß³Ì ---
+// --- ç®¡ç†å‘˜çº¿ç¨‹ ---
 void admin_thread(SOCKET s, std::string ip) {
     char buf[1024]; bool auth = false;
     while(true) {
@@ -388,24 +388,24 @@ void admin_thread(SOCKET s, std::string ip) {
                 auth = true;
                 { std::lock_guard<std::mutex> lk(g_mutex); admins[s] = AdminContext(s, ip); }
                 send(s, "OK", 2, 0);
-                server_log("[¹ÜÀí]", "Admin Login: " + ip);
+                server_log("[ç™»å½•]", "Admin Login: " + ip);
                 rotate_admin_key(); 
             } else { send(s, "FAIL", 4, 0); break; }
             continue;
         }
 
-        std::string response = "Ö´ĞĞÍê±Ï¡£";
+        std::string response = "æ‰§è¡ŒæˆåŠŸï¼";
         
         if(raw.find("ban ") == 0) {
             std::string target_ip = raw.substr(4);
             if(g_console_sock == INVALID_SOCKET) {
-                response = "\033[91m[Ê§°Ü] ×Ü¿ØÌ¨Î´ÔÚÏß£¬ÎŞ·¨Ìá½»ÉóÅú¡£\033[0m";
+                response = "\033[91m[å¤±è´¥] æ§åˆ¶å°æœªè¿æ¥ï¼Œæ— æ³•æäº¤ç”³è¯·\033[0m";
             } else {
                 { std::lock_guard<std::mutex> lk(g_mutex); pending_bans.insert(target_ip); }
-                std::string req = "\r\033[93m[ÉêÇë] Admin(" + ip + ") ÇëÇó·â½û IP: " + target_ip + "\nÇëÊäÈë 'agree " + target_ip + "' ÒÔÅú×¼¡£\033[0m\nConsole > ";
+                std::string req = "\r\033[93m[è¯·æ±‚] Admin(" + ip + ") ç”³è¯·å°ç¦ IP: " + target_ip + "\næ‰§è¡Œå‘½ä»¤ 'agree " + target_ip + "' æ¥æ‰¹å‡†\033[0m\nConsole > ";
                 send(g_console_sock, req.c_str(), (int)req.size(), 0);
-                response = "\033[93m[ÉêÇëÌá½»] ÒÑÍ¨Öª×Ü¿ØÌ¨ÉóÅú¡£\033[0m";
-                server_log("[ÉêÇë]", "Admin(" + ip + ") -> Ban " + target_ip);
+                response = "\033[93m[è¯·æ±‚å·²æäº¤] å·²é€šçŸ¥æ§åˆ¶å°æ“ä½œå‘˜\033[0m";
+                server_log("[æ“ä½œ]", "Admin(" + ip + ") -> Ban " + target_ip);
             }
         }
         else if(raw.find("kick ") == 0) {
@@ -418,10 +418,10 @@ void admin_thread(SOCKET s, std::string ip) {
                 }
             } 
             if(ts != INVALID_SOCKET) {
-                send_packet_str(ts, TYPE_SYSTEM, "ÄãÒÑ±»¹ÜÀíÔ±Ìß³ö¡£");
+                send_packet_str(ts, TYPE_SYSTEM, "æ‚¨å·²è¢«ç®¡ç†å‘˜è¸¢å‡ºï¼");
                 std::thread([ts](){ Sleep(50); cleanup_socket(ts, 8080); }).detach();
-                response = "ÒÑÌß³ö " + target;
-            } else response = "\033[91mÕÒ²»µ½ÓÃ»§¡£\033[0m";
+                response = "å·²è¸¢å‡º " + target;
+            } else response = "\033[91mæœªæ‰¾åˆ°ç”¨æˆ·ï¼\033[0m";
         }
         else if(raw == "rooms") {
             std::lock_guard<std::mutex> lk(g_mutex);
@@ -429,11 +429,11 @@ void admin_thread(SOCKET s, std::string ip) {
             int total = 0;
             for(auto& c : clients) { if(c.second.checked) { room_counts[c.second.room]++; total++; } }
             
-            response = "\033[96m¨X¨T¨T¨T ·¿¼äÍ³¼Æ (Total: " + to_str(total) + ") ¨T¨T¨T¨[\n";
+            response = "\033[96mâ”â”â”â”â” æˆ¿é—´ç»Ÿè®¡ (Total: " + to_str(total) + ") â”â”â”â”â”“\n";
             for(auto& rc : room_counts) {
-                response += "¨U [" + rc.first + "] " + to_str(rc.second) + " ÈË\n";
+                response += "â”ƒ [" + rc.first + "] " + to_str(rc.second) + " äºº\n";
             }
-            response += "¨^¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨a\033[0m";
+            response += "â”—â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”›\033[0m";
         }
         else if(raw == "admins") {
             std::lock_guard<std::mutex> lk(g_mutex);
@@ -442,13 +442,13 @@ void admin_thread(SOCKET s, std::string ip) {
             response += "\033[0m";
         }
         else if(raw.find("say ") == 0) {
-            std::string msg = "\033[91m¡¾È«·ş¹«¸æ¡¿" + raw.substr(4) + "\033[0m";
+            std::string msg = "\033[91må®‰å…¨è­¦å‘Šï¼š" + raw.substr(4) + "\033[0m";
             std::lock_guard<std::mutex> lk(g_mutex);
             for(auto& c : clients) send_packet_str(c.first, TYPE_TEXT, msg);
         }
         else if(raw == "list") {
              std::lock_guard<std::mutex> lk(g_mutex);
-             response = "ÔÚÏßÈËÊı: " + to_str(clients.size()) + " (ÊäÈë rooms ²é¿´ÏêÇé)";
+             response = "å½“å‰åœ¨çº¿: " + to_str(clients.size()) + " (ä½¿ç”¨ rooms æŸ¥çœ‹æˆ¿é—´)";
         }
         
         std::string feedback = "\033[96m[Admin] " + response + "\033[0m\n";
@@ -457,12 +457,12 @@ void admin_thread(SOCKET s, std::string ip) {
     cleanup_socket(s, 9001);
 }
 
-// --- ¿Í»§¶ËÏß³Ì (8080) ---
+// --- å®¢æˆ·ç«¯çº¿ç¨‹ (8080) ---
 void client_thread(SOCKET s, std::string ip) {
     {
         std::lock_guard<std::mutex> lk(g_mutex);
         if(banned_ips.count(ip)) {
-            send_packet_str(s, TYPE_SYSTEM, "\033[91mÄãµÄIPÒÑ±»·â½û¡£\033[0m");
+            send_packet_str(s, TYPE_SYSTEM, "\033[91mè¯¥IPå·²è¢«å°ç¦ã€‚\033[0m");
             closesocket(s); return;
         }
     }
@@ -481,43 +481,43 @@ void client_thread(SOCKET s, std::string ip) {
             
             std::string body(buffer.data() + sizeof(PacketHeader), len);
             
-            // --- Ô¤´¦Àí£ºµÇÂ¼Âß¼­ ---
+            // --- é¢„å¤„ç†ç™»å½•é€»è¾‘ ---
             if(type == TYPE_LOGIN) {
                 { std::lock_guard<std::mutex> lk(g_mutex); clients[s] = ClientContext(s, body, ip, "Lobby"); }
-                std::string welcome = "»¶Ó­À´µ½ÁÄÌìÊÒ v2.2\nµ±Ç°·¿¼ä: [Lobby]  IP: " + ip;
+                std::string welcome = "æ¬¢è¿è¿›å…¥èŠå¤©å®¤ v2.2\nå½“å‰æˆ¿é—´: [Lobby]  IP: " + ip;
                 send_packet_str(s, TYPE_SYSTEM, welcome);
             }
             else if(type == TYPE_CHECK_L) {
                 if(body.find(SERVER_VERSION) == 0) {
                     std::string name;
                     { std::lock_guard<std::mutex> lk(g_mutex); clients[s].checked = true; name = clients[s].name; }
-                    broadcast_room("Lobby", TYPE_SYSTEM, name + " ½øÈëÁË·¿¼ä¡£");
-                    server_log("[µÇÂ¼]", name + " (" + ip + ")");
+                    broadcast_room("Lobby", TYPE_SYSTEM, name + " åŠ å…¥äº†æˆ¿é—´ã€‚");
+                    server_log("[ç™»å½•]", name + " (" + ip + ")");
                 } else { 
-                    server_log("[°²È«]", "¿Í»§¶Ë°æ±¾ÑéÖ¤Ê§°Ü: " + ip);
+                    server_log("[å®‰å…¨]", "å®¢æˆ·ç«¯ç‰ˆæœ¬éªŒè¯å¤±è´¥: " + ip);
                     cleanup_socket(s, 8080); return; 
                 }
             }
-            // --- ¹Ø¼ü£ºË¢ÆÁ¼ì²âÂß¼­ (Õë¶Ô TYPE_TEXT ºÍ TYPE_FILE_HEADER) ---
+            // --- å…³é”®çš„é™æµæ£€æµ‹é€»è¾‘ (é’ˆå¯¹ TYPE_TEXT å’Œ TYPE_FILE_HEADER) ---
             else if(type == TYPE_TEXT || type == TYPE_FILE_HEADER) {
                 bool is_file = (type == TYPE_FILE_HEADER);
                 
-                // 1. µ÷ÓÃ¼ì²âº¯Êı
+                // 1. è°ƒç”¨æ£€æŸ¥å‡½æ•°
                 if(!check_spam(s, is_file)) {
-                    server_log("[°²È«]", "¼ì²âµ½Ë¢ÆÁ/Õ¨ÈºĞĞÎª: " + ip);
+                    server_log("[å®‰ï¿½ï¿½ï¿½]", "æ£€æµ‹åˆ°é™æµ/åˆ·å±è¡Œä¸º: " + ip);
                     
-                    // 2. ·¢ËÍÌáÊ¾²¢Ìß³ö
-                    send_packet_str(s, TYPE_SYSTEM, "\033[91m[¾¯¸æ] ¼ì²âµ½Ë¢ÆÁ/ºéË®¹¥»÷£¬ÄãÒÑ±»Ìß³ö£¡\033[0m");
+                    // 2. æç¤ºç”¨æˆ·è¸¢å‡º
+                    send_packet_str(s, TYPE_SYSTEM, "\033[91m[è­¦å‘Š] æ£€æµ‹åˆ°é™æµ/çŒæ°´ç°è±¡ï¼Œæ‚¨å°†è¢«è¸¢å‡ºï¼\033[0m");
                     
-                    // 3. ¼ÇÂ¼Î¥¹æ´ÎÊı (´¥·¢×Ô¶¯·âIPÂß¼­)
+                    // 3. è®°å½•è¿è§„ç‚¹æ•° (è§¦å‘è‡ªåŠ¨ç¦ç”¨IPé€»è¾‘)
                     register_ip_violation(ip);
                     
-                    // 4. ¹Ø±ÕÁ¬½Ó
+                    // 4. å…³é—­è¿æ¥
                     cleanup_socket(s, 8080); 
-                    return; // ½áÊøÏß³Ì
+                    return; // ç»“æŸçº¿ç¨‹
                 }
 
-                // --- Õı³£µÄÒµÎñÂß¼­ ---
+                // --- æ¶ˆæ¯ä¸šåŠ¡é€»è¾‘ ---
                 if(type == TYPE_TEXT) {
                     std::string n, r_name;
                     { std::lock_guard<std::mutex> lk(g_mutex); n = clients[s].name; r_name = clients[s].room; }
@@ -525,14 +525,14 @@ void client_thread(SOCKET s, std::string ip) {
                     if(body.find("/join ") == 0) {
                         std::string new_room = body.substr(6);
                         if(!new_room.empty()) {
-                            broadcast_room(r_name, TYPE_SYSTEM, n + " Àë¿ªÁË·¿¼ä¡£");
+                            broadcast_room(r_name, TYPE_SYSTEM, n + " ç¦»å¼€äº†æˆ¿é—´ã€‚");
                             { std::lock_guard<std::mutex> lk(g_mutex); clients[s].room = new_room; }
-                            send_packet_str(s, TYPE_SYSTEM, "ÇĞ»»·¿¼äÖÁ: [" + new_room + "]");
-                            broadcast_room(new_room, TYPE_SYSTEM, n + " ¼ÓÈëÁË·¿¼ä¡£", s);
+                            send_packet_str(s, TYPE_SYSTEM, "åˆ‡æ¢æˆ¿é—´æˆåŠŸ: [" + new_room + "]");
+                            broadcast_room(new_room, TYPE_SYSTEM, n + " åŠ å…¥äº†æˆ¿é—´ã€‚", s);
                         }
                     }
                     else if(body == "/who") {
-                        std::string user_list = "\033[93m=== [" + r_name + "] ÔÚÏßÃûµ¥ ===\n";
+                        std::string user_list = "\033[93m=== [" + r_name + "] åœ¨çº¿äººå‘˜ ===\n";
                         {
                             std::lock_guard<std::mutex> lk(g_mutex);
                             for(auto& c : clients) {
@@ -546,14 +546,14 @@ void client_thread(SOCKET s, std::string ip) {
                     }
                 }
                 else if(type == TYPE_FILE_HEADER) {
-                    // Èç¹ûÊÇÎÄ¼şÍ·£¬×ª·¢
+                    // æ–‡ä»¶å¤´éƒ¨ä¿¡æ¯è½¬å‘
                     std::string r_name; { std::lock_guard<std::mutex> lk(g_mutex); r_name = clients[s].room; }
                     broadcast_room(r_name, type, body, s);
                 }
             }
             else if(type == TYPE_FILE_CHUNK) {
-                // ÎÄ¼ş¿éÍ¨³£²»¼ì²âÆµÂÊ£¨ÒòÎª·¢Ò»¸ö´óÎÄ¼ş»áÓĞºÜ¶à¿é£©£¬»òÕßÊ¹ÓÃ·Ç³£¿íËÉµÄÆµÂÊÏŞÖÆ
-                // ÕâÀïÖ»×ª·¢
+                // æ–‡ä»¶å—é€šè¿‡æ™®é€šé€Ÿåº¦è½¬å‘ï¼Œå› ä¸ºæ¯ä¸€ä¸ªç‹¬ç«‹æ–‡ä»¶ä¼šæœ‰å¾ˆå¤šå—ï¼‰æ‰€ä»¥ä¸ä½¿ç”¨åˆ†å¼€çš„é¢‘ç‡é™åˆ¶
+                // æ‰€ä»¥åªè½¬å‘
                 std::string r_name; { std::lock_guard<std::mutex> lk(g_mutex); r_name = clients[s].room; }
                 broadcast_room(r_name, type, body, s);
             }
@@ -584,7 +584,7 @@ int main() {
     sockaddr_in a3; a3.sin_family = AF_INET; a3.sin_port = htons(7891); a3.sin_addr.s_addr = INADDR_ANY;
     bind(s7891, (sockaddr*)&a3, sizeof(a3)); listen(s7891, 10);
 
-    server_log("[ÏµÍ³]", "·şÎñÒÑ¾ÍĞ÷ (Anti-Spam Ä£¿é¿ªÆô)¡£");
+    server_log("[ç³»ç»Ÿ]", "æœåŠ¡å™¨å·²å¯åŠ¨ (Anti-Spam æ¨¡å—å¼€å¯)ï¼");
 
     while(true) {
         fd_set fds; FD_ZERO(&fds);
@@ -608,4 +608,3 @@ int main() {
     }
     return 0;
 }
-
