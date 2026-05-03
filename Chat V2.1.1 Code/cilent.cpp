@@ -15,24 +15,24 @@
 #pragma comment(lib, "ws2_32.lib")
 #endif
 
-// --- Ğ­Òé ---
+// --- åè®® ---
 enum PacketType { TYPE_LOGIN=1, TYPE_TEXT=2, TYPE_FILE_HEADER=3, TYPE_FILE_CHUNK=4, TYPE_SYSTEM=5, TYPE_CHECK_L=10086 };
 struct PacketHeader {
 	uint32_t len;
 	uint32_t type;
 };
 
-// --- ÑéÖ¤ÃÜÔ¿ (±ØĞëÓë·şÎñ¶ËÒ»ÖÂ) ---
+// --- éªŒè¯å¯†é’¥ (å¿…é¡»ä¸æœåŠ¡ç«¯ä¸€è‡´) ---
 const std::string SERVER_VERSION = "DBD311EBDE5B214A54EFEB28DB774E3E9B665FF0D5EB61F3AEA5BC4E44B5264B2FBA3CFD49320402784A094248DCAD46C770966A841E0418FB4124AF9ED25A4E";
 
-// --- È«¾Ö±äÁ¿ ---
+// --- å…¨å±€å˜é‡ ---
 SOCKET g_sock = INVALID_SOCKET;
 SOCKET g_admin_sock = INVALID_SOCKET;
 std::atomic<bool> g_running(true);
 std::string g_srv_ip;
 std::string g_name;
 
-// --- ¸¨Öú ---
+// --- è¾…åŠ© ---
 template <typename T>
 std::string to_str(T value) {
 	std::ostringstream os;
@@ -64,7 +64,7 @@ void draw_bar(long long cur, long long tot) {
 	int w = 30;
 	float p = (float)cur/tot;
 	int pos = (int)(w * p);
-	std::cout << "\r\033[93m·¢ËÍÖĞ: [";
+	std::cout << "\r\033[93må‘é€ä¸­: [";
 	for(int i=0; i<w; ++i) std::cout << (i<pos ? "=" : (i==pos ? ">" : " "));
 	std::cout << "] " << int(p*100) << "%\033[0m" << std::flush;
 }
@@ -80,7 +80,7 @@ void send_pkt(uint32_t t, const char* d, uint32_t l) {
 void upload_file(std::string path) {
 	std::ifstream f(path.c_str(), std::ios::binary|std::ios::ate);
 	if(!f) {
-		std::cout << "\n\033[91mÎÄ¼ş²»´æÔÚ£¡\033[0m\n";
+		std::cout << "\n\033[91mæ–‡ä»¶ä¸å­˜åœ¨ï¼\033[0m\n";
 //		draw_prompt();
 
 		return;
@@ -105,7 +105,7 @@ void upload_file(std::string path) {
 		draw_bar(sent, sz);
 		Sleep(1);
 	}
-	std::cout << "\n·¢ËÍÍê³É¡£\n";
+	std::cout << "\nå‘é€å®Œæˆã€‚\n";
 //	draw_prompt();
 }
 
@@ -129,7 +129,7 @@ void recv_thread() {
 			std::string body(buf.data()+sizeof(PacketHeader), l);
 
 			std::cout << "\r\033[K";
-			if(t == TYPE_SYSTEM) std::cout << "\033[96m[ÏµÍ³] " << body << "\033[0m\n";
+			if(t == TYPE_SYSTEM) std::cout << "\033[96m[ç³»ç»Ÿ] " << body << "\033[0m\n";
 			else if(t == TYPE_TEXT) std::cout << body << "\n";
 			else if(t == TYPE_FILE_HEADER) {
 				size_t p = body.find_last_of('|');
@@ -138,14 +138,14 @@ void recv_thread() {
 				fs.open(name.c_str(), std::ios::binary);
 				f_active = true;
 				f_cur = 0;
-				std::cout << "\033[93m[ÎÄ¼ş] ½ÓÊÕÖĞ: " << name << "\033[0m\n";
+				std::cout << "\033[93m[æ–‡ä»¶] æ¥æ”¶ä¸­: " << name << "\033[0m\n";
 			} else if(t == TYPE_FILE_CHUNK && f_active) {
 				fs.write(body.c_str(), l);
 				f_cur += l;
 				if(f_cur >= f_tot) {
 					fs.close();
 					f_active = false;
-					std::cout << "\033[92m[ÎÄ¼ş] ½ÓÊÕÍê±Ï¡£\033[0m\n";
+					std::cout << "\033[92m[æ–‡ä»¶] æ¥æ”¶å®Œæ¯•ã€‚\033[0m\n";
 				}
 			}
 
@@ -153,7 +153,7 @@ void recv_thread() {
 			draw_prompt();
 		}
 	}
-	std::cout << "\n\033[91mÓë·şÎñÆ÷¶Ï¿ªÁ¬½Ó¡£\033[0m\n";
+	std::cout << "\n\033[91mä¸æœåŠ¡å™¨æ–­å¼€è¿æ¥ã€‚\033[0m\n";
 	exit(0);
 }
 
@@ -170,7 +170,7 @@ void admin_recv_thread() {
 
 void enter_admin_mode(std::string key) {
 	if(g_admin_sock != INVALID_SOCKET) {
-		std::cout << "ÒÑ¾­ÊÇ¹ÜÀíÔ±ÁË¡£\n";
+		std::cout << "å·²ç»æ˜¯ç®¡ç†å‘˜äº†ã€‚\n";
 		draw_prompt();
 		return;
 	}
@@ -182,7 +182,7 @@ void enter_admin_mode(std::string key) {
 	a.sin_addr.s_addr=inet_addr(g_srv_ip.c_str());
 
 	if(connect(g_admin_sock, (sockaddr*)&a, sizeof(a)) != 0) {
-		std::cout << "\033[91mÁ¬½Ó¹ÜÀí¶Ë¿ÚÊ§°Ü¡£\033[0m\n";
+		std::cout << "\033[91mè¿æ¥ç®¡ç†ç«¯å£å¤±è´¥ã€‚\033[0m\n";
 		draw_prompt();
 		closesocket(g_admin_sock);
 		g_admin_sock = INVALID_SOCKET;
@@ -197,10 +197,10 @@ void enter_admin_mode(std::string key) {
 	if(r > 0) {
 		buf[r] = 0;
 		if(std::string(buf).find("OK") != std::string::npos) {
-			std::cout << "\033[92m[Admin] È¨ÏŞ»ñÈ¡³É¹¦¡£\033[0m\n";
+			std::cout << "\033[92m[Admin] æƒé™è·å–æˆåŠŸã€‚\033[0m\n";
 			std::thread(admin_recv_thread).detach();
 		} else {
-			std::cout << "\033[91m[Admin] ÃÜÂë´íÎó¡£\033[0m\n";
+			std::cout << "\033[91m[Admin] å¯†ç é”™è¯¯ã€‚\033[0m\n";
 			closesocket(g_admin_sock);
 			g_admin_sock = INVALID_SOCKET;
 		}
@@ -214,7 +214,7 @@ int main() {
 	WSAStartup(MAKEWORD(2,2), &w);
 
 	std::cout << "\033[96m=== CLIENT v2.1.1 ===\033[0m\n";
-	std::cout << "·şÎñÆ÷ IP (Ä¬ÈÏ 127.0.0.1): ";
+	std::cout << "æœåŠ¡å™¨ IP (é»˜è®¤ 127.0.0.1): ";
 	std::getline(std::cin, g_srv_ip);
 	if(g_srv_ip.empty()) g_srv_ip = "127.0.0.1";
 
@@ -224,21 +224,21 @@ int main() {
 	a.sin_port=htons(8080);
 	a.sin_addr.s_addr=inet_addr(g_srv_ip.c_str());
 	if(connect(g_sock, (sockaddr*)&a, sizeof(a)) != 0) {
-		std::cout << "\033[91mÎŞ·¨Á¬½Óµ½·şÎñÆ÷¡£\033[0m\n";
+		std::cout << "\033[91mæ— æ³•è¿æ¥åˆ°æœåŠ¡å™¨ã€‚\033[0m\n";
 		return 1;
 	}
 
-	std::cout << "ÊäÈëêÇ³Æ: ";
+	std::cout << "è¾“å…¥æ˜µç§°: ";
 	std::getline(std::cin, g_name);
 	send_pkt(TYPE_LOGIN, g_name.c_str(), (uint32_t)g_name.size());
 
-	// --- Ê¹ÓÃĞÂµÄÃÜÔ¿½øĞĞÎÕÊÖÑéÖ¤ ---
+	// --- ä½¿ç”¨æ–°çš„å¯†é’¥è¿›è¡Œæ¡æ‰‹éªŒè¯ ---
 	std::string v = SERVER_VERSION + g_name;
 	send_pkt(TYPE_CHECK_L, v.c_str(), (uint32_t)v.size());
 
 	std::thread(recv_thread).detach();
 
-	std::cout << "\n\033[93mÖ¸Áî: /admin <key> | /join <·¿¼ä> | /sendfile <Â·¾¶>\033[0m\n";
+	std::cout << "\n\033[93mæŒ‡ä»¤: /admin <key> | /join <æˆ¿é—´> | /sendfile <è·¯å¾„>\033[0m\n";
 	draw_prompt();
 
 	std::string line;
@@ -256,7 +256,7 @@ int main() {
 		} else {
 			bool sent_as_admin = false;
 			if(g_admin_sock != INVALID_SOCKET) {
-				// ¼ì²éÊÇ·ñÎª¹ÜÀíÔ±Ö¸Áî
+				// æ£€æŸ¥æ˜¯å¦ä¸ºç®¡ç†å‘˜æŒ‡ä»¤
 				if(line.find("kick ") == 0 || line.find("say ") == 0 ||
 				        line.find("unban ") == 0 || line == "list" ||
 				        line.find("ban ") == 0 || line == "rooms" || line == "admins") {
@@ -275,4 +275,3 @@ int main() {
 	}
 	return 0;
 }
-
